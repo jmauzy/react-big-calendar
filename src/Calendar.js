@@ -664,6 +664,7 @@ class Calendar extends React.Component {
     components: PropTypes.shape({
       event: elementType,
       eventWrapper: elementType,
+      backgroundEventWrapper: elementType,
       eventContainerWrapper: elementType,
       dayWrapper: elementType,
       dateCellWrapper: elementType,
@@ -740,6 +741,7 @@ class Calendar extends React.Component {
 
   constructor(...args) {
     super(...args)
+
     this.state = {
       context: this.getContext(this.props),
     }
@@ -758,6 +760,7 @@ class Calendar extends React.Component {
     resourceIdAccessor,
     resourceTitleAccessor,
     eventPropGetter,
+    backgroundEventPropGetter,
     slotPropGetter,
     dayPropGetter,
     view,
@@ -776,12 +779,16 @@ class Calendar extends React.Component {
       getters: {
         eventProp: (...args) =>
           (eventPropGetter && eventPropGetter(...args)) || {},
+        backgroundEventProp: (...args) =>
+          (backgroundEventPropGetter && backgroundEventPropGetter(...args)) ||
+          {},
         slotProp: (...args) =>
           (slotPropGetter && slotPropGetter(...args)) || {},
         dayProp: (...args) => (dayPropGetter && dayPropGetter(...args)) || {},
       },
       components: defaults(components[view] || {}, omit(components, names), {
         eventWrapper: NoopWrapper,
+        backgroundEventWrapper: NoopWrapper,
         eventContainerWrapper: NoopWrapper,
         dayWrapper: NoopWrapper,
         dateCellWrapper: NoopWrapper,
@@ -840,6 +847,7 @@ class Calendar extends React.Component {
       view,
       toolbar,
       events,
+      backgroundEvents = [],
       style,
       className,
       elementProps,
@@ -889,6 +897,7 @@ class Calendar extends React.Component {
           ref="view"
           {...props}
           events={events}
+          backgroundEvents={backgroundEvents}
           date={current}
           getNow={getNow}
           length={length}
