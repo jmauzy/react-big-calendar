@@ -758,6 +758,7 @@ class Calendar extends React.Component {
     resourceIdAccessor,
     resourceTitleAccessor,
     eventPropGetter,
+    backgroundEventPropGetter,
     slotPropGetter,
     dayPropGetter,
     view,
@@ -776,6 +777,9 @@ class Calendar extends React.Component {
       getters: {
         eventProp: (...args) =>
           (eventPropGetter && eventPropGetter(...args)) || {},
+        backgroundEventProp: (...args) =>
+          (backgroundEventPropGetter && backgroundEventPropGetter(...args)) ||
+          {},
         slotProp: (...args) =>
           (slotPropGetter && slotPropGetter(...args)) || {},
         dayProp: (...args) => (dayPropGetter && dayPropGetter(...args)) || {},
@@ -840,6 +844,7 @@ class Calendar extends React.Component {
       view,
       toolbar,
       events,
+      backgroundEvents = [],
       style,
       className,
       elementProps,
@@ -889,6 +894,7 @@ class Calendar extends React.Component {
           ref="view"
           {...props}
           events={events}
+          backgroundEvents={backgroundEvents}
           date={current}
           getNow={getNow}
           length={length}
@@ -952,7 +958,11 @@ class Calendar extends React.Component {
     }
 
     let views = this.getViews()
-    this.handleRangeChange(this.props.date || this.props.getNow(), views[view], view)
+    this.handleRangeChange(
+      this.props.date || this.props.getNow(),
+      views[view],
+      view
+    )
   }
 
   handleSelectEvent = (...args) => {
