@@ -16,12 +16,18 @@ function TimeGridEvent(props) {
     getters,
     onClick,
     onDoubleClick,
-    components: { event: Event, eventWrapper: EventWrapper },
+    components: {
+      event: Event,
+      eventWrapper: EventWrapper,
+      backgroundEvent: BackgroundEvent,
+    },
   } = props
   let title = accessors.title(event)
   let tooltip = accessors.tooltip(event)
   let end = accessors.end(event)
   let start = accessors.start(event)
+
+  console.log(BackgroundEvent)
 
   let userProps = getters.eventProp(event, start, end, selected)
 
@@ -31,7 +37,11 @@ function TimeGridEvent(props) {
       {label}
     </div>,
     <div key="2" className="rbc-event-content">
-      {Event ? <Event event={event} title={title} /> : title}
+      {BackgroundEvent ? (
+        <BackgroundEvent event={event} title={title} />
+      ) : (
+        title
+      )}
     </div>,
   ]
 

@@ -743,6 +743,7 @@ class Calendar extends React.Component {
     this.state = {
       context: this.getContext(this.props),
     }
+    console.log(this.state, '1222222')
   }
   componentWillReceiveProps(nextProps) {
     this.setState({ context: this.getContext(nextProps) })
@@ -840,6 +841,7 @@ class Calendar extends React.Component {
       view,
       toolbar,
       events,
+      backgroundEvents,
       style,
       className,
       elementProps,
@@ -889,6 +891,7 @@ class Calendar extends React.Component {
           ref="view"
           {...props}
           events={events}
+          backgroundEvents={backgroundEvents}
           date={current}
           getNow={getNow}
           length={length}
@@ -952,7 +955,11 @@ class Calendar extends React.Component {
     }
 
     let views = this.getViews()
-    this.handleRangeChange(this.props.date || this.props.getNow(), views[view], view)
+    this.handleRangeChange(
+      this.props.date || this.props.getNow(),
+      views[view],
+      view
+    )
   }
 
   handleSelectEvent = (...args) => {

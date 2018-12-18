@@ -129,10 +129,11 @@ function sortByRender(events) {
 }
 
 function getStyledEvents({
-  events,
+  events = [],
   minimumStartDifference,
   slotMetrics,
   accessors,
+  isBackground = false,
 }) {
   // Create proxy events and order them so that we don't have
   // to fiddle with z-indexes.
@@ -193,6 +194,8 @@ function getStyledEvents({
       height: event.height,
       width: event.width,
       xOffset: event.xOffset,
+      background: isBackground ? 'blue' : 'green',
+      zIndex: isBackground ? 1 : 2,
     },
   }))
 }

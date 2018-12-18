@@ -141,14 +141,29 @@ export default class TimeGrid extends Component {
     })
   }
 
-  renderEvents(range, events, now) {
+  renderEvents(range, events, now, backgroundEvents) {
     let { min, max, components, accessors, localizer } = this.props
 
+    console.log(events, 222)
+    console.log(backgroundEvents, 111)
+
     const groupedEvents = this.resources.groupEvents(events)
+    const groupedBackgroundEvents = this.resources.groupEvents(backgroundEvents)
 
     return this.resources.map(([id, resource], i) =>
       range.map((date, jj) => {
         let daysEvents = (groupedEvents.get(id) || []).filter(event =>
+          dates.inRange(
+            date,
+            accessors.start(event),
+            accessors.end(event),
+            'day'
+          )
+        )
+
+        let daysBackgroundEvents = (
+          groupedBackgroundEvents.get(id) || []
+        ).filter(event =>
           dates.inRange(
             date,
             accessors.start(event),
@@ -169,6 +184,7 @@ export default class TimeGrid extends Component {
             key={i + '-' + jj}
             date={date}
             events={daysEvents}
+            backgroundEvents={daysBackgroundEvents}
           />
         )
       })
@@ -178,6 +194,7 @@ export default class TimeGrid extends Component {
   render() {
     let {
       events,
+      backgroundEvents,
       range,
       width,
       selected,
@@ -201,7 +218,8 @@ export default class TimeGrid extends Component {
     this.slots = range.length
 
     let allDayEvents = [],
-      rangeEvents = []
+      rangeEvents = [],
+      rangeBackgroundEvents = []
 
     events.forEach(event => {
       if (inRange(event, start, end, accessors)) {
@@ -216,6 +234,23 @@ export default class TimeGrid extends Component {
           allDayEvents.push(event)
         } else {
           rangeEvents.push(event)
+        }
+      }
+    })
+
+    backgroundEvents.forEach(event => {
+      if (inRange(event, start, end, accessors)) {
+        let eStart = accessors.start(event),
+          eEnd = accessors.end(event)
+
+        if (
+          accessors.allDay(event) ||
+          (dates.isJustDate(eStart) && dates.isJustDate(eEnd)) ||
+          (!showMultiDayTimes && !dates.eq(eStart, eEnd, 'day'))
+        ) {
+          console.log('NOT')
+        } else {
+          rangeBackgroundEvents.push(event)
         }
       }
     })
@@ -264,7 +299,12 @@ export default class TimeGrid extends Component {
             components={components}
             className="rbc-time-gutter"
           />
-          {this.renderEvents(range, rangeEvents, getNow())}
+          {this.renderEvents(
+            range,
+            rangeEvents,
+            getNow(),
+            rangeBackgroundEvents
+          )}
         </div>
       </div>
     )
