@@ -12,6 +12,7 @@ import { notify } from './utils/helpers'
 import * as DayEventLayout from './utils/DayEventLayout'
 import TimeSlotGroup from './TimeSlotGroup'
 import TimeGridEvent from './TimeGridEvent'
+import TimeGridBackgroundEvent from './TimeGridBackgroundEvent'
 
 class DayColumn extends React.Component {
   state = { selecting: false, timeIndicatorPosition: null }
@@ -139,6 +140,7 @@ class DayColumn extends React.Component {
         >
           <div className={cn('rbc-events-container', rtl && 'rtl')}>
             {this.renderEvents()}
+            {this.renderBackgroundEvents()}
           </div>
         </EventContainer>
 
@@ -200,6 +202,68 @@ class DayColumn extends React.Component {
 
       return (
         <TimeGridEvent
+          style={style}
+          event={event}
+          label={label}
+          key={'evt_' + idx}
+          getters={getters}
+          isRtl={isRtl}
+          getters={getters}
+          components={components}
+          continuesEarlier={continuesEarlier}
+          continuesLater={continuesLater}
+          accessors={accessors}
+          selected={isSelected(event, selected)}
+          onClick={e => this._select(event, e)}
+          onDoubleClick={e => this._doubleClick(event, e)}
+        />
+      )
+    })
+  }
+
+  renderBackgroundEvents = () => {
+    let {
+      backgroundEvents,
+      rtl: isRtl,
+      selected,
+      accessors,
+      localizer,
+      getters,
+      components,
+      step,
+      timeslots,
+    } = this.props
+
+    const { slotMetrics } = this
+    const { messages } = localizer
+
+    const styledBackgroundEvents = DayEventLayout.getStyledBackgroundEvents({
+      backgroundEvents,
+      accessors,
+      slotMetrics,
+      minimumStartDifference: Math.ceil((step * timeslots) / 2),
+    })
+
+    return styledBackgroundEvents.map(({ event, style }, idx) => {
+      let end = accessors.end(event)
+      let start = accessors.start(event)
+      let format = 'eventTimeRangeFormat'
+      let label
+
+      const startsBeforeDay = slotMetrics.startsBeforeDay(start)
+      const startsAfterDay = slotMetrics.startsAfterDay(end)
+
+      if (startsBeforeDay) format = 'eventTimeRangeEndFormat'
+      else if (startsAfterDay) format = 'eventTimeRangeStartFormat'
+
+      if (startsBeforeDay && startsAfterDay) label = messages.allDay
+      else label = localizer.format({ start, end }, format)
+
+      let continuesEarlier = startsBeforeDay || slotMetrics.startsBefore(start)
+      let continuesLater = startsAfterDay || slotMetrics.startsAfter(end)
+
+      return (
+        <TimeGridBackgroundEvent
           style={style}
           event={event}
           label={label}
