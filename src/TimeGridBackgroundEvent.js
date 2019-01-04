@@ -18,7 +18,7 @@ function TimeGridEvent(props) {
     onDoubleClick,
     components: {
       backgroundEvent: BackgroundEvent,
-      eventWrapper: EventWrapper,
+      backgroundEventWrapper: BackgroundEventWrapper,
     },
   } = props
   let title = accessors.title(event)
@@ -43,7 +43,7 @@ function TimeGridEvent(props) {
   ]
 
   return (
-    <EventWrapper type="time" {...props}>
+    <BackgroundEventWrapper type="time" {...props}>
       <div
         onClick={onClick}
         onDoubleClick={onDoubleClick}
@@ -74,7 +74,7 @@ function TimeGridEvent(props) {
       >
         {inner}
       </div>
-    </EventWrapper>
+    </BackgroundEventWrapper>
   )
 }
 

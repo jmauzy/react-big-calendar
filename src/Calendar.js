@@ -664,6 +664,7 @@ class Calendar extends React.Component {
     components: PropTypes.shape({
       event: elementType,
       eventWrapper: elementType,
+      backgroundEventWrapper: elementType,
       eventContainerWrapper: elementType,
       dayWrapper: elementType,
       dateCellWrapper: elementType,
@@ -740,6 +741,7 @@ class Calendar extends React.Component {
 
   constructor(...args) {
     super(...args)
+
     this.state = {
       context: this.getContext(this.props),
     }
@@ -786,6 +788,7 @@ class Calendar extends React.Component {
       },
       components: defaults(components[view] || {}, omit(components, names), {
         eventWrapper: NoopWrapper,
+        backgroundEventWrapper: NoopWrapper,
         eventContainerWrapper: NoopWrapper,
         dayWrapper: NoopWrapper,
         dateCellWrapper: NoopWrapper,
