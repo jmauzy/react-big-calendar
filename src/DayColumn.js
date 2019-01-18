@@ -237,8 +237,9 @@ class DayColumn extends React.Component {
     const { slotMetrics } = this
     const { messages } = localizer
 
-    const styledBackgroundEvents = DayEventLayout.getStyledBackgroundEvents({
-      backgroundEvents,
+    const styledBackgroundEvents = DayEventLayout.getStyledEvents({
+      events: backgroundEvents,
+      isBackgroundEvent: true,
       accessors,
       slotMetrics,
       minimumStartDifference: Math.ceil((step * timeslots) / 2),

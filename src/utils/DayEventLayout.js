@@ -130,6 +130,7 @@ function sortByRender(events) {
 
 function getStyledEvents({
   events,
+  isBackgroundEvent,
   minimumStartDifference,
   slotMetrics,
   accessors,
@@ -193,79 +194,10 @@ function getStyledEvents({
       height: event.height,
       width: event.width,
       xOffset: event.xOffset,
-      zIndex: 2,
+      // Move this to css, or make sure backgroundevents are rendered first
+      zIndex: isBackgroundEvent ? 1 : 2,
     },
   }))
 }
 
-function getStyledBackgroundEvents({
-  backgroundEvents = [],
-  minimumStartDifference,
-  slotMetrics,
-  accessors,
-}) {
-  // Create proxy events and order them so that we don't have
-  // to fiddle with z-indexes.
-  const proxies = backgroundEvents.map(
-    event => new Event(event, { slotMetrics, accessors })
-  )
-  const eventsInRenderOrder = sortByRender(proxies)
-
-  // Group overlapping events, while keeping order.
-  // Every event is always one of: container, row or leaf.
-  // Containers can contain rows, and rows can contain leaves.
-  const containerEvents = []
-  for (let i = 0; i < eventsInRenderOrder.length; i++) {
-    const event = eventsInRenderOrder[i]
-
-    // Check if this event can go into a container event.
-    const container = containerEvents.find(
-      c =>
-        c.end > event.start ||
-        Math.abs(event.start - c.start) < minimumStartDifference
-    )
-
-    // Couldn't find a container — that means this event is a container.
-    if (!container) {
-      event.rows = []
-      containerEvents.push(event)
-      continue
-    }
-
-    // Found a container for the event.
-    event.container = container
-
-    // Check if the event can be placed in an existing row.
-    // Start looking from behind.
-    let row = null
-    for (let j = container.rows.length - 1; !row && j >= 0; j--) {
-      if (onSameRow(container.rows[j], event, minimumStartDifference)) {
-        row = container.rows[j]
-      }
-    }
-
-    if (row) {
-      // Found a row, so add it.
-      row.leaves.push(event)
-      event.row = row
-    } else {
-      // Couldn't find a row – that means this event is a row.
-      event.leaves = []
-      container.rows.push(event)
-    }
-  }
-
-  // Return the original backgroundEvents, along with their styles.
-  return eventsInRenderOrder.map(event => ({
-    event: event.data,
-    style: {
-      top: event.top,
-      height: event.height,
-      width: event.width,
-      xOffset: event.xOffset,
-      zIndex: 1,
-    },
-  }))
-}
-
-export { getStyledEvents, getStyledBackgroundEvents }
+export { getStyledEvents }
