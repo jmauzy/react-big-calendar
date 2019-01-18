@@ -139,19 +139,11 @@ class DayColumn extends React.Component {
           slotMetrics={slotMetrics}
         >
           <div className={cn('rbc-events-container', rtl && 'rtl')}>
-            {/* Should you combine this to one function? */}
-            {/* Do you really need to pass props here? */}
-            {/* Add another layer of container will disable clicks */}
-            {/* How to fix this without using a new container and still maintinging the width property */}
-            <div className="rbc-background-events">
-              {this.renderEvents({
-                events: this.props.backgroundEvents,
-                isBackgroundEvent: true,
-              })}
-            </div>
-            <div className="rbc-events">
-              {this.renderEvents({ events: this.props.events })}
-            </div>
+            {this.renderEvents({
+              events: this.props.backgroundEvents,
+              isBackgroundEvent: true,
+            })}
+            {this.renderEvents({ events: this.props.events })}
           </div>
         </EventContainer>
 
