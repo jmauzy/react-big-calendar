@@ -110,6 +110,7 @@ export default class TimeGrid extends Component {
 
     return resources.map(([id, resource], i) =>
       range.map((date, jj) => {
+        // Combine to one filter event function
         let daysEvents = (groupedEvents.get(id) || []).filter(event =>
           dates.inRange(
             date,
@@ -119,16 +120,16 @@ export default class TimeGrid extends Component {
           )
         )
 
-        let daysBackgroundEvents = (
-          groupedBackgroundEvents.get(id) || []
-        ).filter(event =>
-          dates.inRange(
-            date,
-            accessors.start(event),
-            accessors.end(event),
-            'day'
+        let daysBackgroundEvents = (groupedBackgroundEvents.get(id) || [])
+          // Combine to one filter event function
+          .filter(event =>
+            dates.inRange(
+              date,
+              accessors.start(event),
+              accessors.end(event),
+              'day'
+            )
           )
-        )
 
         return (
           <DayColumn
@@ -179,6 +180,7 @@ export default class TimeGrid extends Component {
       rangeEvents = [],
       rangeBackgroundEvents = []
 
+    // Instead of sorting only one array into two. Sort two arrays now into three
     events.forEach(event => {
       if (inRange(event, start, end, accessors)) {
         let eStart = accessors.start(event),
@@ -202,6 +204,7 @@ export default class TimeGrid extends Component {
           eEnd = accessors.end(event)
 
         if (
+          // Do we need this?
           !(
             accessors.allDay(event) ||
             (dates.isJustDate(eStart) && dates.isJustDate(eEnd)) ||
