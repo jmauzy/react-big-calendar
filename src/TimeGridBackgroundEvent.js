@@ -28,7 +28,7 @@ function TimeGridEvent(props) {
 
   let userProps = getters.backgroundEventProp(event, start, end, selected)
 
-  let { height, top, width, xOffset, zIndex } = style
+  let { height, top, width, xOffset } = style
   const inner = [
     <div key="1" className="rbc-event-label">
       {label}
@@ -49,7 +49,6 @@ function TimeGridEvent(props) {
         onDoubleClick={onDoubleClick}
         style={{
           ...userProps.style,
-          zIndex: zIndex,
           top: `${top}%`,
           height: `${height}%`,
           [isRtl ? 'right' : 'left']: `${Math.max(0, xOffset)}%`,
