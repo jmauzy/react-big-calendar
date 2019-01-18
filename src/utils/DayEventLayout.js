@@ -130,7 +130,6 @@ function sortByRender(events) {
 
 function getStyledEvents({
   events,
-  isBackgroundEvent,
   minimumStartDifference,
   slotMetrics,
   accessors,
@@ -194,8 +193,6 @@ function getStyledEvents({
       height: event.height,
       width: event.width,
       xOffset: event.xOffset,
-      // Move this to css, or make sure backgroundevents are rendered first
-      zIndex: isBackgroundEvent ? 1 : 2,
     },
   }))
 }
