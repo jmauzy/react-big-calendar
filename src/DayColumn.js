@@ -139,8 +139,13 @@ class DayColumn extends React.Component {
           slotMetrics={slotMetrics}
         >
           <div className={cn('rbc-events-container', rtl && 'rtl')}>
-            {this.renderBackgroundEvents()}
-            {this.renderEvents()}
+            {/* Should you combine this to one function? */}
+            {/* Do you really need to pass props here? */}
+            {this.renderEvents({
+              events: this.props.backgroundEvents,
+              isBackgroundEvent: true,
+            })}
+            {this.renderEvents({ events: this.props.events })}
           </div>
         </EventContainer>
 
@@ -159,9 +164,8 @@ class DayColumn extends React.Component {
     )
   }
 
-  renderEvents = () => {
+  renderEvents = ({ events, isBackgroundEvent }) => {
     let {
-      events,
       rtl: isRtl,
       selected,
       accessors,
@@ -199,88 +203,27 @@ class DayColumn extends React.Component {
 
       let continuesEarlier = startsBeforeDay || slotMetrics.startsBefore(start)
       let continuesLater = startsAfterDay || slotMetrics.startsAfter(end)
+      const settings = {
+        style: style,
+        event: event,
+        label: label,
+        key: 'evt_' + idx,
+        getters: getters,
+        isRtl: isRtl,
+        components: components,
+        continuesEarlier: continuesEarlier,
+        continuesLater: continuesLater,
+        accessors: accessors,
+        selected: isSelected(event, selected),
+        onClick: e => this._select(event, e),
+        onDoubleClick: e => this._doubleClick(event, e),
+      }
 
-      return (
-        <TimeGridEvent
-          style={style}
-          event={event}
-          label={label}
-          key={'evt_' + idx}
-          getters={getters}
-          isRtl={isRtl}
-          getters={getters}
-          components={components}
-          continuesEarlier={continuesEarlier}
-          continuesLater={continuesLater}
-          accessors={accessors}
-          selected={isSelected(event, selected)}
-          onClick={e => this._select(event, e)}
-          onDoubleClick={e => this._doubleClick(event, e)}
-        />
-      )
-    })
-  }
-
-  renderBackgroundEvents = () => {
-    let {
-      backgroundEvents,
-      rtl: isRtl,
-      selected,
-      accessors,
-      localizer,
-      getters,
-      components,
-      step,
-      timeslots,
-    } = this.props
-
-    const { slotMetrics } = this
-    const { messages } = localizer
-
-    const styledBackgroundEvents = DayEventLayout.getStyledEvents({
-      events: backgroundEvents,
-      isBackgroundEvent: true,
-      accessors,
-      slotMetrics,
-      minimumStartDifference: Math.ceil((step * timeslots) / 2),
-    })
-
-    return styledBackgroundEvents.map(({ event, style }, idx) => {
-      let end = accessors.end(event)
-      let start = accessors.start(event)
-      let format = 'eventTimeRangeFormat'
-      let label
-
-      const startsBeforeDay = slotMetrics.startsBeforeDay(start)
-      const startsAfterDay = slotMetrics.startsAfterDay(end)
-
-      if (startsBeforeDay) format = 'eventTimeRangeEndFormat'
-      else if (startsAfterDay) format = 'eventTimeRangeStartFormat'
-
-      if (startsBeforeDay && startsAfterDay) label = messages.allDay
-      else label = localizer.format({ start, end }, format)
-
-      let continuesEarlier = startsBeforeDay || slotMetrics.startsBefore(start)
-      let continuesLater = startsAfterDay || slotMetrics.startsAfter(end)
-
-      return (
-        <TimeGridBackgroundEvent
-          style={style}
-          event={event}
-          label={label}
-          key={'evt_' + idx}
-          getters={getters}
-          isRtl={isRtl}
-          getters={getters}
-          components={components}
-          continuesEarlier={continuesEarlier}
-          continuesLater={continuesLater}
-          accessors={accessors}
-          selected={isSelected(event, selected)}
-          onClick={e => this._select(event, e)}
-          onDoubleClick={e => this._doubleClick(event, e)}
-        />
-      )
+      if (isBackgroundEvent) {
+        return <TimeGridEvent {...settings} />
+      } else {
+        return <TimeGridBackgroundEvent {...settings} />
+      }
     })
   }
 
