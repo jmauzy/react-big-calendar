@@ -180,7 +180,6 @@ export default class TimeGrid extends Component {
       rangeEvents = [],
       rangeBackgroundEvents = []
 
-    // Instead of sorting only one array into two. Sort two arrays now into three
     events.forEach(event => {
       if (inRange(event, start, end, accessors)) {
         let eStart = accessors.start(event),
@@ -200,19 +199,7 @@ export default class TimeGrid extends Component {
 
     backgroundEvents.forEach(event => {
       if (inRange(event, start, end, accessors)) {
-        let eStart = accessors.start(event),
-          eEnd = accessors.end(event)
-
-        if (
-          // Do we need this?
-          !(
-            accessors.allDay(event) ||
-            (dates.isJustDate(eStart) && dates.isJustDate(eEnd)) ||
-            (!showMultiDayTimes && !dates.eq(eStart, eEnd, 'day'))
-          )
-        ) {
-          rangeBackgroundEvents.push(event)
-        }
+        rangeBackgroundEvents.push(event)
       }
     })
 
