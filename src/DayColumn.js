@@ -220,9 +220,9 @@ class DayColumn extends React.Component {
       }
 
       if (isBackgroundEvent) {
-        return <TimeGridEvent {...settings} />
-      } else {
         return <TimeGridBackgroundEvent {...settings} />
+      } else {
+        return <TimeGridEvent {...settings} />
       }
     })
   }
